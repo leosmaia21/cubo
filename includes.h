@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/03/25 21:52:42 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/01 22:18:56 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,16 @@
 #include <unistd.h>
 #include <stdio.h>
 
-void	parser(char *name);
+typedef struct
+{
+	char *NO;
+	char *SO;
+	char *WE;
+	char *EA;
+	int map[8192][8192];
+	int F[3];
+	int C[3];
+}	cubo;
+cubo	*parser(char *name);
 
 #endif
