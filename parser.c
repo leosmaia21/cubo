@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:02:53 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/01 22:18:52 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/05 23:59:45 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,20 +114,20 @@ int	parsecolor(cubo *cubo, char **line)
 	return (1);
 }
 
-int	parsefirstlines(t_list *lines, cubo *cubo)
+int	parsefirstlines(t_list **lines, cubo *cubo)
 {
-	t_list	*current;
+	// t_list	*current;
 	int		stage;
 	char	**content;
 	int		ret;
 
-	current = lines;
+	// current = *lines;
 	stage = 0;
 	ret = 0;
-	while (current && ret < 6)
+	while (*lines && ret < 6)
 	{
-		content = ft_split(current->content, ' ');
-		if (content[0][0] == '1' && content[0][0] == '0')
+		content = ft_split((*lines)->content, ' ');
+		if (!content && content[0][0] == '1' && content[0][0] == '0')
 		{
 			freedouble(content);
 			return (0);
@@ -148,27 +148,23 @@ int	parsefirstlines(t_list *lines, cubo *cubo)
 				ret += parsecolor(cubo, content);
 		}
 		freedouble(content);
-		current = current->next;
+		*lines = (*lines)->next;
 	}
 	return (ret);
 }
 
-//floofill return 1 if the map is valid
-//floofill return 0 if the map is invalid
-int	floodfill(char **map, int x, int y)
+int	floodfill(cubo *cubo, int x, int y)
 {
-	if (map[y][x] == '1')
+	if (x < 0 || y < 0 || x > cubo->size[0] || \
+		y > cubo->size[1] || cubo->map[y][x] == 0)
+		return (0);
+	if (cubo->map[y][x] == '1' || cubo->map[y][x] == '2')
 		return (1);
-	if (map[y][x] == ' ')
+	if (cubo->map[y][x] == '0')
 	{
-		map[y][x] = '1';
-		if (!floodfill(map, x + 1, y))
-			return (0);
-		if (!floodfill(map, x - 1, y))
-			return (0);
-		if (!floodfill(map, x, y + 1))
-			return (0);
-		if (!floodfill(map, x, y - 1))
+		cubo->map[y][x] = '2';
+		if (!floodfill(cubo, x + 1, y) || !floodfill(cubo, x - 1, y) || \
+			!floodfill(cubo, x, y + 1) || !floodfill(cubo, x, y - 1))
 			return (0);
 	}
 	return (1);
@@ -180,7 +176,6 @@ void	initcube(cubo *cubo)
 	int	j;
 
 	i = -1;
-	j = -1;
 	cubo->NO = 0;
 	cubo->SO = 0;
 	cubo->WE = 0;
@@ -191,43 +186,83 @@ void	initcube(cubo *cubo)
 	cubo->C[0] = -1;
 	cubo->C[1] = -1;
 	cubo->C[2] = -1;
-	while (++i < 8192)
+	ft_memset(cubo->map, 0, sizeof(char) * SIZE * SIZE);
+}
+
+//check player position
+void	checkplayer(cubo *cubo)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < cubo->size[1])
 	{
 		j = -1;
-		while (++j < 8192)
-			cubo->map[i][j] = -1;
+		while (++j < cubo->size[0])
+		{
+			if (cubo->map[i][j] == 'N' || cubo->map[i][j] == 'S' || \
+				cubo->map[i][j] == 'W' || cubo->map[i][j] == 'E')
+			{
+				cubo->player[0] = j;
+				cubo->player[1] = i;
+				return ;
+			}
+		}
 	}
 }
 
 //falta fazer o insert do mapa
-void	insertmap(char **map, cubo *cubo)
+void	insertmap(cubo *cubo, t_list *lines)
 {
 	int	i;
 	int	j;
-	char
+	int	max[2];
 
-	i = -1;
 	j = -1;
-
+	ft_memset(max, 0, sizeof(int) * 2);
+	if (!lines)
+		return ;
+	while (lines->content[0] != '0' && lines->content[0] != '1')
+		lines = lines->next;
+	while (lines && lines->content)
+	{
+		j++;
+		i = -1;
+		while (lines->content[++i])
+		{
+			cubo->map[j][i] = lines->content[i];
+			if (max[0] < i)
+				max[0] = i;
+		}
+		lines = lines->next;
+	}
+	cubo->size[0] = max[0];
+	cubo->size[1] = j;
 }
 
 cubo	*parser(char *name)
 {
 	int		fd;
 	t_list	*lines;
+	t_list	*cabeca;
 	cubo	*c;
-	int ret;
+	int		ret;
 
 	c = malloc(sizeof(cubo));
 	initcube(c);
 	fd = open(name, O_RDONLY);
 	lines = getlines(fd);
-	ret = parsefirstlines(lines, c);
-	if (ret < 6)
+	cabeca = lines;
+	ret = parsefirstlines(&lines, c);
+	insertmap(c, lines);
+	checkplayer(c);
+	c->map[c->player[1]][c->player[0]] = '0';
+	if (ret < 6 && !floodfill(c, c->player[0], c->player[1]))
 	{
-		ft_lstclear(&lines, free);
+		ft_lstclear(&cabeca, free);
 		free(c);
 		return (0);
 	}
-
+	return (c);
 }

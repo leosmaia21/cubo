@@ -6,7 +6,7 @@
 /*   By: ledos-sa <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 16:44:48 by ledos-sa          #+#    #+#             */
-/*   Updated: 2023/07/16 16:57:29 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/05 21:41:25 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 typedef struct s_list
 {
-	void			*content;
+	char			*content;
 	struct s_list	*next;
 }	t_list;
 
