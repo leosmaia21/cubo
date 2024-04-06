@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 20:46:50 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/03/25 22:01:01 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/06 00:07:46 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ int	ft_strlen(const char *s)
 	int	x;
 
 	x = 0;
+	if (!s)
+		return (0);
 	while (s[x] != '\0')
 		x++;
 	return (x);

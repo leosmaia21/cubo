@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+./cub3D
 
 # Object files
 *.o

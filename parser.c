@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:02:53 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/05 23:59:45 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/06 01:02:56 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ t_list	*getlines(int fd)
 
 int	parsecords(char **line, cubo *cubo)
 {
-	if (line[3] == 0)
+	if (!(line && line[0] && line[1] && !line[2]))
 		return (0);
 	if (!ft_strcmp(line[0], "NO") && cubo->NO == 0)
 		cubo->NO = ft_strdup(line[1]);
@@ -60,7 +60,7 @@ int	parsecords(char **line, cubo *cubo)
 	return (1);
 }
 
-void	freedouble(char **str)
+int	freedouble(char **str)
 {
 	int	i;
 
@@ -71,6 +71,7 @@ void	freedouble(char **str)
 		i++;
 	}
 	free(str);
+	return (0);
 }
 
 void	insertcolorcubo(cubo *cubo, int *colors, char **line)
@@ -114,25 +115,36 @@ int	parsecolor(cubo *cubo, char **line)
 	return (1);
 }
 
+int	mapstarted(char *str)
+{
+	int	i;
+	int ret;
+
+	i = -1;
+	ret = 0;
+	while (str[++i])
+	{
+		if (!(str[i] == '1' || str[i] == '0' || str[i] == '2' || \
+			str[i] == 'N' || str[i] == 'S' || str[i] == 'W' || str[i] == 'E'))
+			ret = 1;
+	}
+	return (!ret);
+}
+
 int	parsefirstlines(t_list **lines, cubo *cubo)
 {
-	// t_list	*current;
 	int		stage;
 	char	**content;
 	int		ret;
 
-	// current = *lines;
 	stage = 0;
 	ret = 0;
 	while (*lines && ret < 6)
 	{
 		content = ft_split((*lines)->content, ' ');
-		if (!content && content[0][0] == '1' && content[0][0] == '0')
-		{
-			freedouble(content);
-			return (0);
-		}
-		else if (content && content[0] && content[0][0])
+		if (!content && mapstarted((*lines)->content))
+			return (freedouble(content));
+		else if (content && ft_strlen((*lines)->content) && !mapstarted((*lines)->content))
 		{
 			if (!ft_strcmp(content[0], "NO"))
 				ret += parsecords(content, cubo);
@@ -223,7 +235,7 @@ void	insertmap(cubo *cubo, t_list *lines)
 	ft_memset(max, 0, sizeof(int) * 2);
 	if (!lines)
 		return ;
-	while (lines->content[0] != '0' && lines->content[0] != '1')
+	while (!mapstarted(lines->content))
 		lines = lines->next;
 	while (lines && lines->content)
 	{
@@ -258,11 +270,13 @@ cubo	*parser(char *name)
 	insertmap(c, lines);
 	checkplayer(c);
 	c->map[c->player[1]][c->player[0]] = '0';
-	if (ret < 6 && !floodfill(c, c->player[0], c->player[1]))
+	if (ret < 6 || !floodfill(c, c->player[0], c->player[1]))
 	{
 		ft_lstclear(&cabeca, free);
 		free(c);
+		printf("Error\n");
 		return (0);
 	}
+	printf("Player position: %d %d\n", c->player[0], c->player[1]);
 	return (c);
 }
