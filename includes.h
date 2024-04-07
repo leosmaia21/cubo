@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/07 04:46:49 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/07 16:02:19 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #define TILESIZE 64
 #define PLAYERSIZE 15
 #define SLIDE 7
+#define VIEWANGLE (3.141592653/4)
 
 
 typedef struct s_vars {
@@ -54,9 +55,14 @@ typedef struct
 	double	angle;
 	t_vars	vars;
 	t_list	*lines;
-	// int		squaresize[2];
 	int		playerp[2];
 	int		tilesize[2];
+	float	ra;
+	int		xn;
+	int		yn;
+	int		xs;
+	int		ys;
+
 }	cubo;
 
 cubo	*parser(char *name);

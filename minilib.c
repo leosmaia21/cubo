@@ -6,13 +6,15 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 02:45:34 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/07 05:02:04 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/07 13:56:20 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes.h"
 #define LEFT 65361
 #define RIGHT 65363
+#define UP 65362
+#define DOWN 65364
 
 int	bye(t_vars *vars)
 {
@@ -23,7 +25,7 @@ int	bye(t_vars *vars)
 	exit(0);
 }
 
-void updateangle(cubo *c, int keycode)
+void	updateangle(cubo *c, int keycode)
 {
 	if (keycode == RIGHT)
 	{
@@ -42,23 +44,23 @@ void updateangle(cubo *c, int keycode)
 		c->pdy = sin(c->angle) * 8;
 	}
 }
+
 int	key_hook(int keycode, cubo *c)
 {
 	if (keycode == 65307)
 		bye(&c->vars);
-	else if (keycode == 65362)
+	else if (keycode == UP)
 	{
 		c->playerp[0] += c->pdx;
 		c->playerp[1] += c->pdy;
 	}
-	else if (keycode == 65364)
+	else if (keycode == DOWN)
 	{
 		c->playerp[0] -= c->pdx;
 		c->playerp[1] -= c->pdy;
 	}
 	else
 		updateangle(c, keycode);
-	printf("keycode: %d\n", keycode);
 	drawmap(c);
 	return (0);
 }

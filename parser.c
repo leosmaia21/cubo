@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:02:53 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/07 05:02:07 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/07 18:06:07 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void	initcube(cubo *cubo)
 	cubo->C[0] = -1;
 	cubo->C[1] = -1;
 	cubo->C[2] = -1;
-	cubo->angle = PI / 2;
+	cubo->angle = PI / 4;
 	cubo->pdx = cos(cubo->angle) * 8;
 	cubo->pdy = sin(cubo->angle) * 8;
 	ft_memset(cubo->map, 0, sizeof(char) * SIZE * SIZE);
@@ -304,6 +304,9 @@ cubo	*parser(char *name)
 	insertmap(c, lines);
 	checkplayer(c);
 	c->map[c->player[1]][c->player[0]] = '0';
+	//print map sizes in pixels
+	printf("size x: %d\n", c->size[0] * TILESIZE);
+	printf("size y: %d\n", c->size[1] * TILESIZE);
 	if (ret < 6 || !floodfill(c, c->player[0], c->player[1]))
 	{
 		printf("Error\n");

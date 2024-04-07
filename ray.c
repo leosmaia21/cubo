@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:34:08 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/07 04:48:48 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/07 19:49:14 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,88 @@ void	drawplayer(cubo *c)
 	}
 }
 
+int	checkpointinside(cubo *c, int x, int y)
+{
+	printf("x: %d, y: %d\n", x, y);
+	mlx_pixel_put(c->vars.mlx, c->vars.win, y, x, 0x000000FF);
+	//printf map coordinates
+	printf("map coordinates:y %d,x %d\n", y / TILESIZE, x / TILESIZE);
+	if (c->map[x / TILESIZE][y / TILESIZE] == '1')
+		return (1);
+
+	return (0);
+}
+
+void	drawhorizontal(cubo *c)
+{
+	int x;
+	int	dot;
+
+	x = -1;
+	c->ra = c->angle;
+	while (++x < 1)
+	{
+		// horizontal
+		if (c->ra > 0 && c->ra < PI)
+			c->yn = (c->playerp[0] / TILESIZE) * TILESIZE + TILESIZE - c->playerp[0];
+		else
+			c->yn = c->playerp[0] - (c->playerp[0] / TILESIZE) * TILESIZE;
+		c->xn = c->yn / tan(c->ra);
+		c->ys = TILESIZE;
+		c->xs = c->ys / tan(c->ra);
+		//print player position
+		printf("player position: %d, %d\n", c->playerp[0], c->playerp[1]);
+		if (checkpointinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn) == 1)
+			break ;
+		dot = 0;
+		while (dot < 8)
+		{
+			if (checkpointinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn) == 1)
+				break ;
+			c->xn += c->xs;
+			c->yn += c->ys;
+			dot++;
+		}
+	}
+}
+
+void	drawvertical(cubo *c)
+{
+	int	x;
+	int	dot;
+
+	x = -1;
+
+	c->ra = c->angle;
+	while (++x < 1)
+	{
+		// vertical
+		if (c->ra < PI / 2 || c->ra > 3 * PI / 2)
+			c->xs = c->playerp[0] + (TILESIZE - c->playerp[0] % TILESIZE);
+		else
+			c->xs = c->playerp[0] - c->playerp[0] / TILESIZE * TILESIZE;
+		c->ys = c->xs * tan(c->ra);
+		c->yn = c->xn * tan(c->ra);
+		if (checkpointinside(c, c->xs, c->ys) == 1)
+			break ;
+		dot = 0;
+		while (dot < 8)
+		{
+			if (checkpointinside(c, c->xs, c->ys) == 1)
+				break ;
+			c->xs += c->xn;
+			c->ys += c->yn;
+			dot++;
+		}
+	}
+}
+
+void drawrays(cubo *c)
+{
+	drawhorizontal(c);
+	mlx_pixel_put(c->vars.mlx, c->vars.win, c->playerp[1] + c->xs, c->playerp[0] + c->ys, 0x00FF0000);
+}
+
 void drawanglepoint(cubo *c)
 {
 	int x;
@@ -73,4 +155,5 @@ void	drawmap(cubo *c)
 	}
 	drawanglepoint(c);
 	drawplayer(c);
+	drawrays(c);
 }

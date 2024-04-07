@@ -4,7 +4,7 @@ SRCS = 42/get_next_line/get_next_line.c  42/get_next_line/get_next_line_utils.c 
 	   main.c parser.c ray.c minilib.c
 # CFLAGS = -O3 -glldb  -Wall -Wextra -Werror
 # CFLAGS = -g  -Wall -Wextra -Werror
-CFLAGS = -g  -Wall -Wextra -O3
+CFLAGS = -g  -Wall -Wextra
 # CFLAGS =  -glldb -fsanitize=address
 OBJS_FOLDER = objs
 
