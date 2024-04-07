@@ -1,10 +1,10 @@
 CC = cc
-# MLXFLAGS = -L ./minilibx-linux -lmlx -Ilmlx -lXext -lX11 -lm
+MLXFLAGS = -L ./minilib -lmlx -Ilmlx -lXext -lX11 -lm
 SRCS = 42/get_next_line/get_next_line.c  42/get_next_line/get_next_line_utils.c \
-	   main.c parser.c
+	   main.c parser.c ray.c minilib.c
 # CFLAGS = -O3 -glldb  -Wall -Wextra -Werror
 # CFLAGS = -g  -Wall -Wextra -Werror
-CFLAGS = -g  -Wall -Wextra
+CFLAGS = -g  -Wall -Wextra -O3
 # CFLAGS =  -glldb -fsanitize=address
 OBJS_FOLDER = objs
 
@@ -16,8 +16,8 @@ all: $(NAME)
 
 $(NAME): $(OBJS_FOLDER) $(OBJS)
 	$(MAKE) -C ./42/libft
-	# $(CC)  $(OBJS) $(CFLAGS) $(MLXFLAGS) libft/libft.a -o $(NAME)
-	$(CC)  $(OBJS) $(CFLAGS)  42/libft/libft.a -o $(NAME)
+	$(CC)  $(OBJS) $(CFLAGS) $(MLXFLAGS) 42/libft/libft.a -o $(NAME)
+	# $(CC)  $(OBJS) $(CFLAGS)  42/libft/libft.a -o $(NAME)
 
 $(OBJS_FOLDER):
 	mkdir -p objs/42/get_next_line

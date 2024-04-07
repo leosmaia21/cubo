@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:02:53 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/06 01:02:56 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/07 05:02:07 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,15 +120,13 @@ int	mapstarted(char *str)
 	int	i;
 	int ret;
 
-	i = -1;
+	i = 0;
 	ret = 0;
-	while (str[++i])
-	{
-		if (!(str[i] == '1' || str[i] == '0' || str[i] == '2' || \
-			str[i] == 'N' || str[i] == 'S' || str[i] == 'W' || str[i] == 'E'))
-			ret = 1;
-	}
-	return (!ret);
+	while (str[i] && str[i] == ' ')
+		i++;
+	if (str[i] == '1' || str[i] == '0' || str[i] == '2')
+		ret = 1;
+	return (ret);
 }
 
 int	parsefirstlines(t_list **lines, cubo *cubo)
@@ -142,6 +140,7 @@ int	parsefirstlines(t_list **lines, cubo *cubo)
 	while (*lines && ret < 6)
 	{
 		content = ft_split((*lines)->content, ' ');
+
 		if (!content && mapstarted((*lines)->content))
 			return (freedouble(content));
 		else if (content && ft_strlen((*lines)->content) && !mapstarted((*lines)->content))
@@ -184,10 +183,6 @@ int	floodfill(cubo *cubo, int x, int y)
 
 void	initcube(cubo *cubo)
 {
-	int	i;
-	int	j;
-
-	i = -1;
 	cubo->NO = 0;
 	cubo->SO = 0;
 	cubo->WE = 0;
@@ -198,6 +193,9 @@ void	initcube(cubo *cubo)
 	cubo->C[0] = -1;
 	cubo->C[1] = -1;
 	cubo->C[2] = -1;
+	cubo->angle = PI / 2;
+	cubo->pdx = cos(cubo->angle) * 8;
+	cubo->pdy = sin(cubo->angle) * 8;
 	ft_memset(cubo->map, 0, sizeof(char) * SIZE * SIZE);
 }
 
@@ -208,16 +206,18 @@ void	checkplayer(cubo *cubo)
 	int	j;
 
 	i = -1;
-	while (++i < cubo->size[1])
+	while (++i <= cubo->size[1])
 	{
 		j = -1;
-		while (++j < cubo->size[0])
+		while (++j <= cubo->size[0])
 		{
 			if (cubo->map[i][j] == 'N' || cubo->map[i][j] == 'S' || \
 				cubo->map[i][j] == 'W' || cubo->map[i][j] == 'E')
 			{
 				cubo->player[0] = j;
 				cubo->player[1] = i;
+				cubo->playerp[0] = j * TILESIZE + (TILESIZE / 2) - PLAYERSIZE / 2;
+				cubo->playerp[1] = i * TILESIZE + (TILESIZE / 2) - PLAYERSIZE / 2;
 				return ;
 			}
 		}
@@ -249,8 +249,41 @@ void	insertmap(cubo *cubo, t_list *lines)
 		}
 		lines = lines->next;
 	}
-	cubo->size[0] = max[0];
-	cubo->size[1] = j;
+	cubo->size[0] = max[0] + 1;
+	cubo->size[1] = j + 1;
+}
+
+void freeall(cubo *cubo, t_list *lines)
+{
+	ft_lstclear(&lines, free);
+	if (cubo->NO)
+		free(cubo->NO);
+	if (cubo->SO)
+		free(cubo->SO);
+	if (cubo->WE)
+		free(cubo->WE);
+	if (cubo->EA)
+		free(cubo->EA);
+	free(cubo);
+}
+
+void	filltherest(cubo *cubo)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < cubo->size[1])
+	{
+		j = -1;
+		while (++j < cubo->size[0])
+		{
+			if (cubo->map[i][j] == ' ')
+				cubo->map[i][j] = '1';
+			if (cubo->map[i][j] == '2')
+				cubo->map[i][j] = '0';
+		}
+	}
 }
 
 cubo	*parser(char *name)
@@ -258,13 +291,14 @@ cubo	*parser(char *name)
 	int		fd;
 	t_list	*lines;
 	t_list	*cabeca;
-	cubo	*c;
 	int		ret;
+	cubo	*c;
 
 	c = malloc(sizeof(cubo));
 	initcube(c);
 	fd = open(name, O_RDONLY);
 	lines = getlines(fd);
+	c->lines = lines;
 	cabeca = lines;
 	ret = parsefirstlines(&lines, c);
 	insertmap(c, lines);
@@ -272,11 +306,9 @@ cubo	*parser(char *name)
 	c->map[c->player[1]][c->player[0]] = '0';
 	if (ret < 6 || !floodfill(c, c->player[0], c->player[1]))
 	{
-		ft_lstclear(&cabeca, free);
-		free(c);
 		printf("Error\n");
 		return (0);
 	}
-	printf("Player position: %d %d\n", c->player[0], c->player[1]);
+	filltherest(c);
 	return (c);
 }
