@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:02:53 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/08 22:50:42 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/09 22:50:26 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void	initcube(cubo *cubo)
 	cubo->C[0] = -1;
 	cubo->C[1] = -1;
 	cubo->C[2] = -1;
-	cubo->angle = PI / 2;
+	cubo->angle = -PI / 2;
 	cubo->pdx = cos(cubo->angle) * 8;
 	cubo->pdy = sin(cubo->angle) * 8;
 	ft_memset(cubo->map, 0, sizeof(char) * SIZE * SIZE);
@@ -216,8 +216,8 @@ void	checkplayer(cubo *cubo)
 			{
 				cubo->player[0] = i;
 				cubo->player[1] = j;
-				cubo->playerp[0] = i * TILESIZE + (TILESIZE / 2) - PLAYERSIZE / 2;
-				cubo->playerp[1] = j * TILESIZE + (TILESIZE / 2) - PLAYERSIZE / 2;
+				cubo->playerp[0] = i * TILE + (TILE / 2) - PLAYERSIZE / 2;
+				cubo->playerp[1] = j * TILE + (TILE / 2) - PLAYERSIZE / 2;
 				return ;
 			}
 		}
@@ -305,8 +305,8 @@ cubo	*parser(char *name)
 	checkplayer(c);
 	c->map[c->player[0]][c->player[1]] = '0';
 	//print map sizes in pixels
-	printf("size x: %d\n", c->size[0] * TILESIZE);
-	printf("size y: %d\n", c->size[1] * TILESIZE);
+	printf("size x: %d\n", c->size[0] * TILE);
+	printf("size y: %d\n", c->size[1] * TILE);
 	if (ret < 6 || !floodfill(c, c->player[1], c->player[0]))
 	{
 		printf("Error\n");

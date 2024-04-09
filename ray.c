@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:34:08 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/08 22:52:25 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/09 22:51:06 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ void	drawsquare(cubo *c, int x, int y, int color)
 	int	xx;
 
 	yy = -1;
-	while (++yy < TILESIZE)
+	while (++yy < TILE)
 	{
 		xx = -1;
-		while (++xx < TILESIZE)
+		while (++xx < TILE)
 		{
-			mlx_pixel_put(c->vars.mlx, c->vars.win, x * TILESIZE + xx, y * TILESIZE + yy, color);
+			mlx_pixel_put(c->vars.mlx, c->vars.win, x * TILE + xx, y * TILE + yy, color);
 		}
 	}
 }
@@ -44,17 +44,19 @@ void	drawplayer(cubo *c)
 	}
 }
 
-int	checkpointinside(cubo *c, int x, int y)
+int	checkinside(cubo *c, int x, int y)
 {
-	printf("x: %d, y: %d\n", x, y);
-	if (c->map[y / TILESIZE][x / TILESIZE] == '1')
+	if (c->map[y / TILE][x / TILE] == '1')
+	{
+		mlx_pixel_put(c->vars.mlx, c->vars.win, x, y, 0x0000FF00);
 		return (1);
+	}
 	return (0);
 }
 
-void	drawhorizontal(cubo *c)
+int	drawhorizontal(cubo *c)
 {
-	int x;
+	int	x;
 	int	dot;
 
 	x = -1;
@@ -63,24 +65,22 @@ void	drawhorizontal(cubo *c)
 	{
 		// horizontal
 		if (c->ra > 0 && c->ra < PI)
-			c->yn = (c->playerp[0] / TILESIZE) * TILESIZE + TILESIZE - c->playerp[0];
+			c->yn = (c->playerp[0] / TILE) * TILE + TILE - c->playerp[0];
 		else
-			c->yn = -(c->playerp[0] - ((c->playerp[0] / TILESIZE) * TILESIZE));
+			c->yn = -(c->playerp[0] - ((c->playerp[0] / TILE) * TILE)) - 1;
 		c->xn = c->yn / tan(c->ra);
-		c->ys = TILESIZE;
+		c->ys = TILE;
 		c->xs = c->ys / tan(c->ra);
-		if (checkpointinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn) == 1)
-			break ;
-		dot = 0;
-		while (dot < 8)
+		dot = -1;
+		while (++dot < 8)
 		{
-			if (checkpointinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn) == 1)
-				break ;
+			if (checkinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn))
+				return (1);
 			c->xn += c->xs;
 			c->yn += c->ys;
-			dot++;
 		}
 	}
+	return (0);
 }
 
 void	drawvertical(cubo *c)
@@ -95,17 +95,17 @@ void	drawvertical(cubo *c)
 	{
 		// vertical
 		if (c->ra < PI / 2 || c->ra > 3 * PI / 2)
-			c->xs = c->playerp[0] + (TILESIZE - c->playerp[0] % TILESIZE);
+			c->xs = c->playerp[0] + (TILE - c->playerp[0] % TILE);
 		else
-			c->xs = c->playerp[0] - c->playerp[0] / TILESIZE * TILESIZE;
+			c->xs = c->playerp[0] - c->playerp[0] / TILE * TILE;
 		c->ys = c->xs * tan(c->ra);
 		c->yn = c->xn * tan(c->ra);
-		if (checkpointinside(c, c->xs, c->ys) == 1)
+		if (checkinside(c, c->xs, c->ys) == 1)
 			break ;
 		dot = 0;
 		while (dot < 8)
 		{
-			if (checkpointinside(c, c->xs, c->ys) == 1)
+			if (checkinside(c, c->xs, c->ys) == 1)
 				break ;
 			c->xs += c->xn;
 			c->ys += c->yn;
@@ -117,7 +117,7 @@ void	drawvertical(cubo *c)
 void drawrays(cubo *c)
 {
 	drawhorizontal(c);
-	mlx_pixel_put(c->vars.mlx, c->vars.win, c->playerp[1] + c->xs, c->playerp[0] + c->ys, 0x00FF0000);
+	// mlx_pixel_put(c->vars.mlx, c->vars.win, c->playerp[1] + c->xs, c->playerp[0] + c->ys, 0x00FF0000);
 }
 
 void drawanglepoint(cubo *c)

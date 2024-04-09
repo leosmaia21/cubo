@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/07 16:02:19 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/09 22:50:16 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 #define PI 3.141592653
 #define SIZE 820
-#define TILESIZE 64
+#define TILE 64
 #define PLAYERSIZE 15
 #define SLIDE 7
 #define VIEWANGLE (3.141592653/4)
