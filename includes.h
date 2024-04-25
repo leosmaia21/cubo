@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/09 22:50:16 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/25 20:50:41 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ typedef struct
 	t_list	*lines;
 	int		playerp[2];
 	int		tilesize[2];
-	float	ra;
+	double	ra;
 	int		xn;
 	int		yn;
 	int		xs;
