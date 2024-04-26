@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:34:08 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/25 20:57:56 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/26 23:51:45 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,25 +45,34 @@ void	drawplayer(cubo *c)
 	}
 }
 
-int	checkinside(cubo *c, int x, int y)
+int	checkinside(cubo *c, int x, int y, int direction)
 {
-	// mlx_pixel_put(c->vars.mlx, c->vars.win, x, y, 0x000000FF);
-	printf("x: %d, y: %d\n", x, y);
+	if (x < 0 || y < 0 || x > c->size[0] * TILE || y > c->size[1] * TILE)
+		return (0);
 	if (c->map[y / TILE][x / TILE] == '1')
 	{
-		mlx_pixel_put(c->vars.mlx, c->vars.win, x, y, 0x0000FF00);
+		if (direction == HORIZONTAL)
+		{
+			c->horx = x;
+			c->hory = y;
+		}
+		else
+		{
+			c->vertx = x;
+			c->verty = y;
+		}
 		return (1);
 	}
 	return (0);
 }
 
+//TODO check angle 0 and PI
 int	drawhorizontal(cubo *c)
 {
 	int	x;
 	int	dot;
 
 	x = -1;
-	c->ra = c->angle;
 	while (++x < 1 && c->ra != 0.0 && c->ra != PI)
 	{
 		// horizontal
@@ -82,7 +91,7 @@ int	drawhorizontal(cubo *c)
 		dot = -1;
 		while (++dot < 8)
 		{
-			if (checkinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn))
+			if (checkinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn, HORIZONTAL))
 				return (1);
 			c->xn += c->xs;
 			c->yn += c->ys;
@@ -97,7 +106,6 @@ int	drawvertical(cubo *c)
 	int	dot;
 
 	x = -1;
-	c->ra = c->angle;
 	while (++x < 1 && c->ra != PI / 2 && c->ra != 3 * PI / 2)
 	{
 		if (c->ra < PI / 2 || c->ra > 3 * PI / 2)
@@ -115,7 +123,7 @@ int	drawvertical(cubo *c)
 		dot = -1;
 		while (++dot < 8)
 		{
-			if (checkinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn))
+			if (checkinside(c, c->playerp[1] + c->xn, c->playerp[0] + c->yn, VERTICAL))
 				return (1);
 			c->xn += c->xs;
 			c->yn += c->ys;
@@ -124,10 +132,53 @@ int	drawvertical(cubo *c)
 	return (0);
 }
 
+int	dist(int x1, int y1, int x2, int y2)
+{
+	return (sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)));
+}
+
+void drawline(cubo *c, float x0, float y0, const float x1, const float y1)
+{
+    float x = x1 - x0;
+    float y = y1 - y0;
+    const float max = fmaxf(fabsf(x), fabsf(y));
+    x /= max;
+    y /= max;
+    for (float n = 0; n < max; ++n)
+    {
+		mlx_pixel_put(c->vars.mlx, c->vars.win, x0, y0, 0x00FF0000);
+        x0 += x;
+        y0 += y;
+    }
+}
+
 void drawrays(cubo *c)
 {
-	drawhorizontal(c);
-	// mlx_pixel_put(c->vars.mlx, c->vars.win, c->playerp[1] + c->xs, c->playerp[0] + c->ys, 0x00FF0000);
+	int	x;
+
+	x = -1;
+	// c->ra = c->angle - (ANGLEVIEW / 2);
+	c->ra = c->angle;
+	// while (++x < 1)
+	// {
+		drawhorizontal(c);
+		drawvertical(c);
+		c->distH = dist(c->playerp[1], c->playerp[0], c->horx, c->hory);
+		c->distV = dist(c->playerp[1], c->playerp[0], c->vertx, c->verty);
+		x = -1;
+		if (c->distH < c->distV)
+		{
+			mlx_pixel_put(c->vars.mlx, c->vars.win, c->horx, c->hory, 0x000000FF);
+			drawline(c, c->playerp[1], c->playerp[0], c->horx, c->hory);
+		}
+		else
+		{
+			mlx_pixel_put(c->vars.mlx, c->vars.win, c->vertx, c->verty, 0x000000FF);
+			drawline(c, c->playerp[1], c->playerp[0], c->vertx, c->verty);
+		}
+		c->ra += ANGLEVIEW / ANGLEITER;
+		printf("distH: %f, distV: %f\n", c->distH, c->distV);
+	// }
 }
 
 void drawanglepoint(cubo *c)

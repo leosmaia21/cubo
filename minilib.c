@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 02:45:34 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/07 13:56:20 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/26 23:41:49 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@ int	key_hook(int keycode, cubo *c)
 		bye(&c->vars);
 	else if (keycode == UP)
 	{
-		c->playerp[0] += c->pdx;
-		c->playerp[1] += c->pdy;
+		c->playerp[1] += c->pdx;
+		c->playerp[0] += c->pdy;
 	}
 	else if (keycode == DOWN)
 	{
-		c->playerp[0] -= c->pdx;
-		c->playerp[1] -= c->pdy;
+		c->playerp[1] -= c->pdx;
+		c->playerp[0] -= c->pdy;
 	}
 	else
 		updateangle(c, keycode);

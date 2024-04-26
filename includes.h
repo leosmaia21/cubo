@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/25 20:50:41 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/26 23:22:34 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,10 @@
 #define PLAYERSIZE 15
 #define SLIDE 7
 #define VIEWANGLE (3.141592653/4)
-
+#define HORIZONTAL 0
+#define VERTICAL 1
+#define ANGLEVIEW (PI/6)
+#define ANGLEITER 30
 
 typedef struct s_vars {
 	void		*mlx;
@@ -62,7 +65,12 @@ typedef struct
 	int		yn;
 	int		xs;
 	int		ys;
-
+	int		vertx;
+	int		verty;
+	int		horx;
+	int		hory;
+	double	distV;
+	double	distH;
 }	cubo;
 
 cubo	*parser(char *name);
