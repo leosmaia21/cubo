@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:34:08 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/26 23:51:45 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/27 01:36:39 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,9 @@ int	checkinside(cubo *c, int x, int y, int direction)
 //TODO check angle 0 and PI
 int	drawhorizontal(cubo *c)
 {
-	int	x;
 	int	dot;
 
-	x = -1;
-	while (++x < 1 && c->ra != 0.0 && c->ra != PI)
+	if (c->ra != 0.0 && c->ra != PI)
 	{
 		// horizontal
 		if (c->ra > 0 && c->ra < PI)
@@ -102,11 +100,9 @@ int	drawhorizontal(cubo *c)
 
 int	drawvertical(cubo *c)
 {
-	int	x;
 	int	dot;
 
-	x = -1;
-	while (++x < 1 && c->ra != PI / 2 && c->ra != 3 * PI / 2)
+	if (c->ra != PI / 2 && c->ra != 3 * PI / 2)
 	{
 		if (c->ra < PI / 2 || c->ra > 3 * PI / 2)
 		{
@@ -152,26 +148,44 @@ void drawline(cubo *c, float x0, float y0, const float x1, const float y1)
     }
 }
 
+void	resetvalues(cubo *c)
+{
+	c->horx = 0;
+	c->hory = 0;
+	c->vertx = 0;
+	c->verty = 0;
+	c->distH = 0;
+	c->distV = 0;
+	c->xn = 0;
+	c->yn = 0;
+	c->xs = 0;
+	c->ys = 0;
+}
+
 void drawrays(cubo *c)
 {
 	int	x;
+	int	ret[2];
 
 	x = -1;
 	// c->ra = c->angle - (ANGLEVIEW / 2);
-	c->ra = c->angle;
+	resetvalues(c);
+	c->ra = c->angle - 0.0001;
+
+	printf("angle: %f\n", c->angle);
 	// while (++x < 1)
 	// {
-		drawhorizontal(c);
-		drawvertical(c);
+		ret[0] = drawhorizontal(c);
+		ret[1] = drawvertical(c);
 		c->distH = dist(c->playerp[1], c->playerp[0], c->horx, c->hory);
 		c->distV = dist(c->playerp[1], c->playerp[0], c->vertx, c->verty);
 		x = -1;
-		if (c->distH < c->distV)
+		if (c->distH < c->distV && ret[0] == 1)
 		{
 			mlx_pixel_put(c->vars.mlx, c->vars.win, c->horx, c->hory, 0x000000FF);
 			drawline(c, c->playerp[1], c->playerp[0], c->horx, c->hory);
 		}
-		else
+		else if (ret[1] == 1)
 		{
 			mlx_pixel_put(c->vars.mlx, c->vars.win, c->vertx, c->verty, 0x000000FF);
 			drawline(c, c->playerp[1], c->playerp[0], c->vertx, c->verty);

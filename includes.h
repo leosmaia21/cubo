@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/26 23:22:34 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/27 01:34:27 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define INCLUDES_H
 
 #include <math.h>
+#include <limits.h>
 #include "42/libft/libft.h"
 #include "minilib/mlx.h"
 #include "42/get_next_line/get_next_line.h"

@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 02:45:34 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/26 23:41:49 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/04/27 01:37:02 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ void	updateangle(cubo *c, int keycode)
 		c->pdx = cos(c->angle) * 8;
 		c->pdy = sin(c->angle) * 8;
 	}
+	//print pdx, pdy
+	printf("pdx: %d, pdy: %d\n", c->pdx, c->pdy);
 }
 
 int	key_hook(int keycode, cubo *c)
