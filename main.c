@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 20:47:11 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/05/01 00:21:32 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/05/01 17:02:46 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 void	init(cubo *c)
 {
 	c->vars.mlx = mlx_init();
-	c->vars.win = mlx_new_window(c->vars.mlx, 1000 , 500, "Cub3d");
-	c->vars.img = mlx_new_image(c->vars.mlx, 1000, 500);
+	c->vars.win = mlx_new_window(c->vars.mlx, TILE * c->size[0] + 300 , TILE * c->size[1], "Cub3d");
+	c->vars.img = mlx_new_image(c->vars.mlx, TILE * c->size[0] + 300, TILE * c->size[1]);
 	c->vars.addr = mlx_get_data_addr(c->vars.img, &c->vars.bits_per_pixel,
 			&c->vars.line_length, &c->vars.endian);
 	mlx_key_hook(c->vars.win, key_hook , c);

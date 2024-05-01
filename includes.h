@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/05/01 00:40:35 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/05/01 19:27:44 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@
 #define VIEWANGLE (3.141592653/4)
 #define HORIZONTAL 0
 #define VERTICAL 1
-#define ANGLEVIEW (PI/4)
-#define ANGLEITER 800
+#define ANGLEVIEW (PI/6)
+#define ANGLEITER 100
 
 typedef struct s_vars {
 	void		*mlx;

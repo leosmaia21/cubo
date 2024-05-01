@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:34:08 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/05/01 00:43:45 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/05/01 19:26:23 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	drawsquare(cubo *c, int x, int y, int color)
 		xx = -1;
 		while (++xx < TILE)
 		{
-			mlx_pixel_put(c->vars.mlx, c->vars.win, x * TILE + xx, y * TILE + yy, color);
+			my_mlx_pixel_put(&c->vars, x * TILE + xx, y * TILE + yy, color);
 		}
 	}
 }
@@ -40,7 +40,7 @@ void	drawplayer(cubo *c)
 		xx = -1;
 		while (++xx < PLAYERSIZE)
 		{
-			mlx_pixel_put(c->vars.mlx, c->vars.win, c->playerp[1] + xx, c->playerp[0] + yy, 0x00FF0000);
+			my_mlx_pixel_put(&c->vars, c->playerp[1] + xx, c->playerp[0] + yy, 0x00FF0000);
 		}
 	}
 }
@@ -73,7 +73,6 @@ int	drawhorizontal(cubo *c)
 
 	if (c->ra != 0.0 && c->ra != PI)
 	{
-		// horizontal
 		if (c->ra > 0 && c->ra < PI)
 		{
 			c->yn = (c->playerp[0] / TILE) * TILE + TILE - c->playerp[0];
@@ -133,20 +132,20 @@ int	dist(int x1, int y1, int x2, int y2)
 	return (sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)));
 }
 
-// void drawline(cubo *c, float x0, float y0, const float x1, const float y1)
-// {
-//     float x = x1 - x0;
-//     float y = y1 - y0;
-//     const float max = fmaxf(fabsf(x), fabsf(y));
-//     x /= max;
-//     y /= max;
-//     for (float n = 0; n < max; ++n)
-//     {
-// 		mlx_pixel_put(c->vars.mlx, c->vars.win, x0, y0, 0x00FF0000);
-//         x0 += x;
-//         y0 += y;
-//     }
-// }
+void drawline(cubo *c, float x0, float y0, const float x1, const float y1)
+{
+    float x = x1 - x0;
+    float y = y1 - y0;
+    const float max = fmaxf(fabsf(x), fabsf(y));
+    x /= max;
+    y /= max;
+    for (float n = 0; n < max; ++n)
+    {
+		my_mlx_pixel_put(&c->vars, x0, y0, 0x00FF0000);
+        x0 += x;
+        y0 += y;
+    }
+}
 
 void drawline2(cubo *c, t_point2 p, int width)
 {
@@ -155,7 +154,6 @@ void drawline2(cubo *c, t_point2 p, int width)
 	float	max;
 	int 	n;
 	int		i;
-
 
 	x = p.x2 - p.x1;
 	y = p.y2 - p.y1;
@@ -172,9 +170,9 @@ void drawline2(cubo *c, t_point2 p, int width)
 			p.x1 += x;
 			p.y1 += y;
 		}
-		p.x1++;
 		p.x1 = p.x1 - (max * x);
 		p.y1 = p.y1 - (max * y);
+		p.x1++;
 	}
 }
 
@@ -199,14 +197,15 @@ void drawcleanmap(cubo *c)
 	int	y;
 
 	y = -1;
-	while (++y <= 500)
+	while (++y < c->size[1] * TILE)
 	{
 		x = -1;
-		while (++x <= 1000)
+		while (++x < c->size[0] * TILE + 300)
 		{
-			my_mlx_pixel_put(&c->vars, x, y, 0x0000FF00);
+			my_mlx_pixel_put(&c->vars, x, y, 0x00000000);
 		}
 	}
+		x = c->size[0] * TILE - 1;
 }
 
 void drawrays(cubo *c)
@@ -218,8 +217,9 @@ void drawrays(cubo *c)
 
 	x = -1;
 	resetvalues(c);
-	drawcleanmap(c);
-	c->ra = c->angle - 0.0001 - (ANGLEVIEW / 2);
+	c->ra = c->angle - 0.0001 - ANGLEVIEW / 2;
+	// printf("ola\n");
+
 	while (++x < ANGLEITER)
 	{
 		ret[0] = drawhorizontal(c);
@@ -227,15 +227,25 @@ void drawrays(cubo *c)
 		c->distH = dist(c->playerp[1], c->playerp[0], c->horx, c->hory);
 		c->distV = dist(c->playerp[1], c->playerp[0], c->vertx, c->verty);
 		if (c->distH < c->distV && ret[0] == 1)
+		{
+			drawline(c, c->playerp[1], c->playerp[0], c->horx, c->hory);
 			c->distT = c->distH;
+		}
 		else if (ret[1] == 1)
+		{
+			drawline(c, c->playerp[1], c->playerp[0], c->vertx, c->verty);
 			c->distT = c->distV;
-		lineH = (500.0) / c->distT;
-		if (lineH > 500)
-			lineH = 500;
-		lineO = 250 - (lineH / 2);
-		drawline2(c, (t_point2){x * 5, lineO, x*5, lineO + lineH}, 5);
+		}
+		lineH = (300.0) / c->distT;
+		if (lineH > 300)
+			lineH = 300;
+		lineO = 150 - (lineH / 2);
+		int t = c->size[0] * TILE;
+		drawline2(c, (t_point2){x * (300 / ANGLEITER) + t, lineO, x* (300 / ANGLEITER) + t, lineO + lineH}, 300/ANGLEITER);
 		c->ra += ANGLEVIEW / ANGLEITER;
+		if (c->ra > 2 * PI)
+			c->ra -= 2 * PI;
+
 	}
 	mlx_put_image_to_window(c->vars.mlx, c->vars.win, c->vars.img, 0, 0);
 }
@@ -256,18 +266,19 @@ void	drawmap(cubo *c)
 	int	y;
 
 	y = -1;
-	// while (++y <= c->size[1])
-	// {
-	// 	x = -1;
-	// 	while (++x <= c->size[0])
-	// 	{
-	// 		if (c->map[y][x] == '0')
-	// 			drawsquare(c, x, y, 0x00FFFFFF);
-	// 		else if (c->map[y][x] == '1')
-	// 			drawsquare(c, x, y, 0x00000000);
-	// 	}
-	// }
-	// drawanglepoint(c);
-	// drawplayer(c);
+	drawcleanmap(c);
+	while (++y <= c->size[1])
+	{
+		x = -1;
+		while (++x <= c->size[0])
+		{
+			if (c->map[y][x] == '0')
+				drawsquare(c, x, y, 0x00FFFFFF);
+			else if (c->map[y][x] == '1')
+				drawsquare(c, x, y, 0x00000000);
+		}
+	}
+	drawanglepoint(c);
+	drawplayer(c);
 	drawrays(c);
 }
