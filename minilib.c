@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 02:45:34 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/27 01:37:02 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/05/01 00:16:17 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	updateangle(cubo *c, int keycode)
 		c->pdy = sin(c->angle) * 8;
 	}
 	//print pdx, pdy
-	printf("pdx: %d, pdy: %d\n", c->pdx, c->pdy);
+	// printf("pdx: %d, pdy: %d\n", c->pdx, c->pdy);
 }
 
 int	key_hook(int keycode, cubo *c)
@@ -65,4 +65,12 @@ int	key_hook(int keycode, cubo *c)
 		updateangle(c, keycode);
 	drawmap(c);
 	return (0);
+}
+
+void	my_mlx_pixel_put(t_vars *data, int x, int y, int color)
+{
+	char	*dst;
+
+	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+	*(unsigned int *)dst = color;
 }

@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:34:08 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/27 01:36:39 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/05/01 00:43:45 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,20 +133,51 @@ int	dist(int x1, int y1, int x2, int y2)
 	return (sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)));
 }
 
-void drawline(cubo *c, float x0, float y0, const float x1, const float y1)
+// void drawline(cubo *c, float x0, float y0, const float x1, const float y1)
+// {
+//     float x = x1 - x0;
+//     float y = y1 - y0;
+//     const float max = fmaxf(fabsf(x), fabsf(y));
+//     x /= max;
+//     y /= max;
+//     for (float n = 0; n < max; ++n)
+//     {
+// 		mlx_pixel_put(c->vars.mlx, c->vars.win, x0, y0, 0x00FF0000);
+//         x0 += x;
+//         y0 += y;
+//     }
+// }
+
+void drawline2(cubo *c, t_point2 p, int width)
 {
-    float x = x1 - x0;
-    float y = y1 - y0;
-    const float max = fmaxf(fabsf(x), fabsf(y));
-    x /= max;
-    y /= max;
-    for (float n = 0; n < max; ++n)
-    {
-		mlx_pixel_put(c->vars.mlx, c->vars.win, x0, y0, 0x00FF0000);
-        x0 += x;
-        y0 += y;
-    }
+	float	x;
+	float	y;
+	float	max;
+	int 	n;
+	int		i;
+
+
+	x = p.x2 - p.x1;
+	y = p.y2 - p.y1;
+	max = fmaxf(fabsf(x), fabsf(y));
+	x /= max;
+	y /= max;
+	i = -1;
+	while (++i < width)
+	{
+		n = -1;
+		while (++n < max)
+		{
+			my_mlx_pixel_put(&c->vars, p.x1, p.y1, 0x00FF0000);
+			p.x1 += x;
+			p.y1 += y;
+		}
+		p.x1++;
+		p.x1 = p.x1 - (max * x);
+		p.y1 = p.y1 - (max * y);
+	}
 }
+
 
 void	resetvalues(cubo *c)
 {
@@ -162,37 +193,51 @@ void	resetvalues(cubo *c)
 	c->ys = 0;
 }
 
+void drawcleanmap(cubo *c)
+{
+	int	x;
+	int	y;
+
+	y = -1;
+	while (++y <= 500)
+	{
+		x = -1;
+		while (++x <= 1000)
+		{
+			my_mlx_pixel_put(&c->vars, x, y, 0x0000FF00);
+		}
+	}
+}
+
 void drawrays(cubo *c)
 {
 	int	x;
 	int	ret[2];
+	float lineH;
+	float lineO;
 
 	x = -1;
-	// c->ra = c->angle - (ANGLEVIEW / 2);
 	resetvalues(c);
-	c->ra = c->angle - 0.0001;
-
-	printf("angle: %f\n", c->angle);
-	// while (++x < 1)
-	// {
+	drawcleanmap(c);
+	c->ra = c->angle - 0.0001 - (ANGLEVIEW / 2);
+	while (++x < ANGLEITER)
+	{
 		ret[0] = drawhorizontal(c);
 		ret[1] = drawvertical(c);
 		c->distH = dist(c->playerp[1], c->playerp[0], c->horx, c->hory);
 		c->distV = dist(c->playerp[1], c->playerp[0], c->vertx, c->verty);
-		x = -1;
 		if (c->distH < c->distV && ret[0] == 1)
-		{
-			mlx_pixel_put(c->vars.mlx, c->vars.win, c->horx, c->hory, 0x000000FF);
-			drawline(c, c->playerp[1], c->playerp[0], c->horx, c->hory);
-		}
+			c->distT = c->distH;
 		else if (ret[1] == 1)
-		{
-			mlx_pixel_put(c->vars.mlx, c->vars.win, c->vertx, c->verty, 0x000000FF);
-			drawline(c, c->playerp[1], c->playerp[0], c->vertx, c->verty);
-		}
+			c->distT = c->distV;
+		lineH = (500.0) / c->distT;
+		if (lineH > 500)
+			lineH = 500;
+		lineO = 250 - (lineH / 2);
+		drawline2(c, (t_point2){x * 5, lineO, x*5, lineO + lineH}, 5);
 		c->ra += ANGLEVIEW / ANGLEITER;
-		printf("distH: %f, distV: %f\n", c->distH, c->distV);
-	// }
+	}
+	mlx_put_image_to_window(c->vars.mlx, c->vars.win, c->vars.img, 0, 0);
 }
 
 void drawanglepoint(cubo *c)
@@ -202,7 +247,7 @@ void drawanglepoint(cubo *c)
 
 	x = c->playerp[1] + c->pdx * 4;
 	y = c->playerp[0] + c->pdy * 4;
-	mlx_pixel_put(c->vars.mlx, c->vars.win, x, y, 0x00FF0000);
+	// mlx_pixel_put(c->vars.mlx, c->vars.win, x, y, 0x00FF0000);
 }
 
 void	drawmap(cubo *c)
@@ -211,18 +256,18 @@ void	drawmap(cubo *c)
 	int	y;
 
 	y = -1;
-	while (++y <= c->size[1])
-	{
-		x = -1;
-		while (++x <= c->size[0])
-		{
-			if (c->map[y][x] == '0')
-				drawsquare(c, x, y, 0x00FFFFFF);
-			else if (c->map[y][x] == '1')
-				drawsquare(c, x, y, 0x00000000);
-		}
-	}
-	drawanglepoint(c);
-	drawplayer(c);
+	// while (++y <= c->size[1])
+	// {
+	// 	x = -1;
+	// 	while (++x <= c->size[0])
+	// 	{
+	// 		if (c->map[y][x] == '0')
+	// 			drawsquare(c, x, y, 0x00FFFFFF);
+	// 		else if (c->map[y][x] == '1')
+	// 			drawsquare(c, x, y, 0x00000000);
+	// 	}
+	// }
+	// drawanglepoint(c);
+	// drawplayer(c);
 	drawrays(c);
 }

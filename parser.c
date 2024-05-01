@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:02:53 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/26 21:41:15 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/05/01 00:09:27 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,8 +305,8 @@ cubo	*parser(char *name)
 	checkplayer(c);
 	c->map[c->player[0]][c->player[1]] = '0';
 	//print map sizes in pixels
-	printf("size x: %d\n", c->size[0] * TILE);
-	printf("size y: %d\n", c->size[1] * TILE);
+	// printf("size x: %d\n", c->size[0] * TILE);
+	// printf("size y: %d\n", c->size[1] * TILE);
 	if (ret < 6 || !floodfill(c, c->player[1], c->player[0]))
 	{
 		printf("Error\n");

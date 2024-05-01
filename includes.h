@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/04/27 01:34:27 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/05/01 00:40:35 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@
 #define VIEWANGLE (3.141592653/4)
 #define HORIZONTAL 0
 #define VERTICAL 1
-#define ANGLEVIEW (PI/6)
-#define ANGLEITER 30
+#define ANGLEVIEW (PI/4)
+#define ANGLEITER 800
 
 typedef struct s_vars {
 	void		*mlx;
@@ -42,6 +42,14 @@ typedef struct s_vars {
 	int			line_length;
 	int			endian;
 }				t_vars;
+
+typedef struct point
+{
+	int	x1;
+	int	y1;
+	int	x2;
+	int	y2;
+}				t_point2;
 
 typedef struct
 {
@@ -72,6 +80,7 @@ typedef struct
 	int		hory;
 	double	distV;
 	double	distH;
+	int		distT;
 }	cubo;
 
 cubo	*parser(char *name);
@@ -81,5 +90,6 @@ void	drawplayer(cubo *c);
 void	freeall(cubo *cubo, t_list *lines);
 int		key_hook(int keycode, cubo *c);
 int		bye(t_vars *vars);
+void	my_mlx_pixel_put(t_vars *data, int x, int y, int color);
 
 #endif
