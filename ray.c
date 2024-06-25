@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:34:08 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/05/01 19:26:23 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/06/25 22:54:54 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ int	drawhorizontal(cubo *c)
 {
 	int	dot;
 
-	if (c->ra != 0.0 && c->ra != PI)
-	{
+	// if (c->ra != 0.0 && c->ra != PI)
+	// {
 		if (c->ra > 0 && c->ra < PI)
 		{
 			c->yn = (c->playerp[0] / TILE) * TILE + TILE - c->playerp[0];
@@ -93,7 +93,7 @@ int	drawhorizontal(cubo *c)
 			c->xn += c->xs;
 			c->yn += c->ys;
 		}
-	}
+	// }
 	return (0);
 }
 
@@ -101,9 +101,9 @@ int	drawvertical(cubo *c)
 {
 	int	dot;
 
-	if (c->ra != PI / 2 && c->ra != 3 * PI / 2)
-	{
-		if (c->ra < PI / 2 || c->ra > 3 * PI / 2)
+	// if (c->ra != PI / 2 && c->ra != 3 * PI / 2)
+	// {
+		if (c->ra < PI / 2 && c->ra > 3 * PI / 2)
 		{
 			c->xn = (TILE + (c->playerp[1] / TILE) * TILE) - c->playerp[1];
 			c->xs = TILE;
@@ -123,13 +123,16 @@ int	drawvertical(cubo *c)
 			c->xn += c->xs;
 			c->yn += c->ys;
 		}
-	}
+	// }
 	return (0);
 }
 
 int	dist(int x1, int y1, int x2, int y2)
 {
-	return (sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)));
+	float gdistance;
+
+	gdistance = ((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1));
+	return (sqrt(gdistance));
 }
 
 void drawline(cubo *c, float x0, float y0, const float x1, const float y1)
@@ -145,35 +148,37 @@ void drawline(cubo *c, float x0, float y0, const float x1, const float y1)
         x0 += x;
         y0 += y;
     }
+	// my_mlx_pixel_put(&c->vars, x1, y1, 0x00FF0000);
 }
 
 void drawline2(cubo *c, t_point2 p, int width)
 {
-	float	x;
 	float	y;
+	float	x;
 	float	max;
 	int 	n;
 	int		i;
 
-	x = p.x2 - p.x1;
-	y = p.y2 - p.y1;
-	max = fmaxf(fabsf(x), fabsf(y));
-	x /= max;
-	y /= max;
-	i = -1;
-	while (++i < width)
-	{
-		n = -1;
-		while (++n < max)
-		{
-			my_mlx_pixel_put(&c->vars, p.x1, p.y1, 0x00FF0000);
-			p.x1 += x;
-			p.y1 += y;
-		}
-		p.x1 = p.x1 - (max * x);
-		p.y1 = p.y1 - (max * y);
-		p.x1++;
-	}
+	// x = p.x2 - p.x1;
+	// y = p.y2 - p.y1;
+	// max = fmaxf(fabsf(x), fabsf(y));
+	// x /= max;
+	// y /= max;
+	// i = -1;
+	// while (++i < width)
+	// {
+	// 	n = -1;
+	// 	while (++n < max)
+	// 	{
+	// 		// my_mlx_pixel_put(&c->vars, p.x1, p.y1, 0x00FF0000);
+	// 		p.x1 += x;
+	// 		p.y1 += y;
+	// 	}
+	// 	p.x1 = p.x1 - (max * x);
+	// 	p.y1 = p.y1 - (max * y);
+	// 	p.x1++;
+	// }
+	// my_mlx_pixel_put(&c->vars, p.x1, p.y1, 0x00FF0000);
 }
 
 
@@ -236,12 +241,13 @@ void drawrays(cubo *c)
 			drawline(c, c->playerp[1], c->playerp[0], c->vertx, c->verty);
 			c->distT = c->distV;
 		}
+		printf("distT: %d, iter %d distH %f distV %f\n", c->distT, x, c->distH, c->distV);
 		lineH = (300.0) / c->distT;
 		if (lineH > 300)
 			lineH = 300;
 		lineO = 150 - (lineH / 2);
 		int t = c->size[0] * TILE;
-		drawline2(c, (t_point2){x * (300 / ANGLEITER) + t, lineO, x* (300 / ANGLEITER) + t, lineO + lineH}, 300/ANGLEITER);
+		// drawline2(c, (t_point2){x * (300 / ANGLEITER) + t, lineO, x* (300 / ANGLEITER) + t, lineO + lineH}, 300/ANGLEITER);
 		c->ra += ANGLEVIEW / ANGLEITER;
 		if (c->ra > 2 * PI)
 			c->ra -= 2 * PI;

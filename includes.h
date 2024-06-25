@@ -6,7 +6,7 @@
 /*   By: ledos-sa <ledos-sa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 21:04:09 by ledos-sa          #+#    #+#             */
-/*   Updated: 2024/05/01 19:27:44 by ledos-sa         ###   ########.fr       */
+/*   Updated: 2024/06/25 22:35:23 by ledos-sa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 #define HORIZONTAL 0
 #define VERTICAL 1
 #define ANGLEVIEW (PI/6)
-#define ANGLEITER 100
+#define ANGLEITER 30
 
 typedef struct s_vars {
 	void		*mlx;
